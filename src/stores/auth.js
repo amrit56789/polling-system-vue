@@ -1,4 +1,4 @@
-import { reactive, toRefs, computed} from 'vue';
+import { reactive, toRefs, computed } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
@@ -13,6 +13,11 @@ export const useAuthStore = defineStore('auth', () => {
         polls: [],
         signupError: null,
         loginError: null,
+        showModal: false,
+        modalTitle: '',
+        modalMessage: '',
+        modalType: 'info',
+
     });
     const router = useRouter();
 
@@ -86,6 +91,17 @@ export const useAuthStore = defineStore('auth', () => {
         router.push('/login');
     };
 
+    function openModal({ title, message, type = 'info' }) {
+        state.modalTitle = title;
+        state.modalMessage = message;
+        state.modalType = type;
+        state.showModal = true;
+    }
+
+    function closeModal() {
+        state.showModal = false;
+    }
+
     return {
         ...toRefs(state),
         resetError,
@@ -93,6 +109,9 @@ export const useAuthStore = defineStore('auth', () => {
         login,
         fetchRoles,
         logout,
-        isLoggedIn
+        isLoggedIn,
+        openModal,
+        closeModal,
+
     };
 });

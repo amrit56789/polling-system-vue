@@ -1,26 +1,20 @@
 <template>
 <div>
-    <nav class="" v-if="isLoggedIn && !isLoginOrSignupPage">
+    <nav class="" v-if="isLoggedIn">
         <NavbarHeader />
     </nav>
     <router-view></router-view>
 </div>
 </template>
 
-  
-    
-  
 <script>
-import NavbarHeader from "./Views/NavbarHeader.vue"
+import NavbarHeader from "./components/NavbarHeader.vue"
 import {
     useAuthStore
 } from './stores/auth';
 import {
     computed
 } from 'vue';
-import {
-    useRoute
-} from 'vue-router';
 
 export default {
     name: 'App',
@@ -30,15 +24,8 @@ export default {
     setup() {
         const authStore = useAuthStore();
         const isLoggedIn = computed(() => authStore.isLoggedIn);
-        const route = useRoute();
-
-        const isLoginOrSignupPage = computed(() => {
-            return ['login', 'signup'].includes(route.name);
-        });
-
         return {
             isLoggedIn,
-            isLoginOrSignupPage,
         };
     },
 };

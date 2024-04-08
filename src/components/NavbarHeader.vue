@@ -10,13 +10,13 @@
                 </span>
                 <span class="ml-3">{{ user.firstName }}</span>
             </button>
-            <div v-show="showDropdown" @click="showDropdown = false" class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-20 border border-gray-200">
+            <div v-show="showDropdown" @click="toggleDropdown" class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-20 border border-gray-200">
                 <div class="px-4 py-3 text-sm text-gray-700 bg-gray-50 rounded-t-lg">
                     <div class="font-medium">{{ user.firstName }}</div>
                     <div class="text-gray-500">{{ user.email }}</div>
                 </div>
                 <div class="border-t border-gray-200"></div>
-                <button @click="logout" class="w-full hover:text-white text-left block px-4 py-3 text-sm text-gray-700 hover:bg-gray-500 focus:outline-none focus:bg-gray-100">
+                <button @click="handleLogout" class="w-full hover:text-white text-left block px-4 py-3 text-sm text-gray-700 hover:bg-gray-500 focus:outline-none focus:bg-gray-100">
                     Logout
                 </button>
             </div>
@@ -24,38 +24,33 @@
     </div>
 </nav>
 </template>
-
-<script>
+    
+<script setup>
 import {
-    ref,
+    ref
 } from 'vue';
-import {
-    useAuthStore
-} from '../stores/auth';
 import {
     storeToRefs
 } from 'pinia';
-export default {
-    name: 'NavbarHeader',
-    setup() {
-        const authStore = useAuthStore();
-        const {
-            logout
-        } = authStore
-        const {
-            user,
-            isLoggedIn
-        } = storeToRefs(authStore)
-        const showDropdown = ref(false);
-        const toggleDropdown = () => showDropdown.value = !showDropdown.value;
+import {
+    useAuthStore
+} from '../stores/auth'; 
 
-        return {
-            logout,
-            toggleDropdown,
-            showDropdown,
-            user,
-            isLoggedIn
-        };
-    },
+const authStore = useAuthStore();
+const {
+    logout
+} = authStore;
+const {
+    user,
+    isLoggedIn
+} = storeToRefs(authStore);
+const showDropdown = ref(false);
+
+const toggleDropdown = () => {
+    showDropdown.value = !showDropdown.value;
+};
+
+const handleLogout = async () => {
+    logout();
 };
 </script>

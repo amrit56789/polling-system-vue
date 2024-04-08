@@ -1,188 +1,79 @@
 <template>
-<div class="flex justify-center gap-10 mt-32">
-    <form @submit.prevent="submitLogin" class="border-2 border-slate-200 rounded-xl space-y-4 p-4 shadow-lg flex flex-col justify-between">
-        <h1 class="font-bold text-2xl text-center">Login</h1>
-        <div class="field">
-            <label for="email" class="label">Email:</label>
-            <input type="email" v-model="form.email" placeholder="Email" class="input" id="email" />
-            <p v-if="errors.email" class="text-red-500 text-sm mt-1 text-left">{{ errors.email }}</p>
+<div class="flex justify-center px-4 mt-10 lg:mt-32">
+    <form @submit.prevent="customSubmitLogin" class="border-2 border-slate-200 rounded-xl space-y-4 p-4 shadow-lg flex flex-col w-full sm:w-2/3 md:w-1/2 lg:w-1/3 bg-white">
+        <h1 class="font-bold text-xl md:text-2xl text-center">Login</h1>
+        <div class="flex flex-col mb-4">
+            <label for="email" class="text-gray-500 text-sm md:text-md text-left mb-2 lg:mb-3">Email:</label>
+            <input type="email" v-model="form.email" placeholder="Email" class="p-2 shadow appearance-none border-b border-gray-500 bg-transparent w-full focus:outline-none" id="email" />
+            <p v-if="errors.email" class="text-red-500 text-xs md:text-sm mt-1">{{ errors.email }}</p>
         </div>
 
-        <div class="field">
-            <label for="password" class="label">Password:</label>
-            <div class="input-wrapper">
-                <input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="Password" class="input" id="password" />
-                <span @click="togglePasswordVisibility" class="icon-eye">
-                    <i :class="{'fas fa-eye-slash': showPassword, 'fas fa-eye': !showPassword}"></i>
-                </span>
-            </div>
-            <p v-if="errors.password" class="text-red-500 text-sm mt-1 text-left">{{ errors.password }}</p>
+        <div class="relative flex flex-col mb-4">
+            <label for="password" class="text-gray-500 text-sm md:text-md text-left mb-2 lg:mb-3">Password:</label>
+            <input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="Password" class="p-2 shadow appearance-none border-b border-gray-500 bg-transparent w-full focus:outline-none" id="password" />
+            <span @click="togglePasswordVisibility" class="absolute inset-y-0 right-3 lg:top-9 md:top-7 flex items-center cursor-pointer text-gray-700">
+                <i :class="{'fas fa-eye-slash': showPassword, 'fas fa-eye': !showPassword}"></i>
+            </span>
+            <p v-if="errors.password" class="text-red-500 text-xs md:text-sm mt-1">{{ errors.password }}</p>
         </div>
 
-        <button type="submit" class="btn flex justify-center items-center" :disabled="isSubmitting">
+        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full flex justify-center items-center" :disabled="isSubmitting">
             <span v-if="!isSubmitting">Login</span>
-            <div v-else class="button-loader"></div>
+            <div v-else class="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white"></div>
         </button>
-        <span v-if="loginError" class="text-red-500">{{ loginError }}</span>
-        <div class="flex text-sm justify-center">
+        <span v-if="loginError" class="text-red-500 text-xs md:text-sm">{{ loginError }}</span>
+
+        <div class="flex text-xs md:text-sm justify-center mt-4">
             <p>Don't have an account yet?</p>
             <router-link to="/signup" class="text-blue-500 hover:text-blue-600 mx-1">Sign Up</router-link>
         </div>
     </form>
-    <PopupModal :isVisible="showModal" :title="modalTitle" :message="modalMessage" :type="modalType" @confirmed="handleModalConfirm" />
-
 </div>
 </template>
 
-    
-<script>
-import {
-    ref
-} from 'vue';
+<script setup>
 import {
     useLogin,
     useToggleVisibility
 } from '../composables/useLoginSignup';
-
-import PopupModal from './PopupModal.vue';
 import {
     useAuthStore
 } from '../stores/auth';
 import {
-    storeToRefs
-} from 'pinia';
-import {
     useRouter
 } from 'vue-router';
+import {
+    storeToRefs
+} from 'pinia';
 
-export default {
-    name: 'LoginForm',
-    components: {
-        PopupModal
-    },
-    setup() {
-        const {
-            form,
-            errors,
-            isSubmitting,
-            submitLogin,
-        } = useLogin();
-        const router = useRouter();
-        const authStore = useAuthStore();
-        const {
-            loginError
-        } = storeToRefs(authStore)
-        const showModal = ref(false);
-        const modalTitle = ref('');
-        const modalMessage = ref('');
-        const modalType = ref('success');
-        const customSubmitLogin = async () => {
-            const result = await submitLogin();
-            if (result) {
-                modalTitle.value = "Success";
-                modalMessage.value = "Login Successful!";
-                modalType.value = 'success';
-                showModal.value = true;
-                router.push('/polls');
-            }
-        };
+const router = useRouter();
+const authStore = useAuthStore();
+const {
+    loginError,
+} = storeToRefs(authStore);
 
-        const handleModalConfirm = () => {
-            showModal.value = false;
-        };
-        return {
-            form,
-            errors,
-            isSubmitting,
-            submitLogin: customSubmitLogin,
-            showModal,
-            modalMessage,
-            modalType,
-            modalTitle,
-            loginError,
-            handleModalConfirm,
-            ...useToggleVisibility()
-        };
-    },
+const {
+    form,
+    errors,
+    isSubmitting,
+    submitLogin
+} = useLogin();
+
+const {
+    showPassword,
+    togglePasswordVisibility
+} = useToggleVisibility();
+
+const customSubmitLogin = async () => {
+    const result = await submitLogin();
+    if (result) {
+        router.push('/polls');
+    }
 };
+
 </script>
 
-    
 <style scoped>
-form {
-    width: 30%;
-    background-color: #FFFFFF;
-    padding: 20px 40px;
-}
-
-.input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-}
-
-.input {
-    flex: 1;
-    padding: 0.5rem;
-    margin: 0.1rem 0;
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid #592525;
-    background-color: transparent;
-    font-size: 0.8rem;
-}
-
-.icon-eye {
-    position: absolute;
-    right: 0.5rem;
-    cursor: pointer;
-}
-
-.field {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-}
-
-.label {
-    text-align: start;
-    margin-bottom: 5px;
-    color: #929191;
-    font-size: 0.95rem;
-}
-
-.input:focus {
-    outline: none;
-}
-
-.btn {
-    background-color: #1DB75F;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    width: 100%;
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.button-loader {
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #3498db;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    animation: spin 1s linear infinite;
-}
-
-.btn:hover {
-    background-color: #23824c;
-}
-
 @keyframes spin {
     0% {
         transform: rotate(0deg);

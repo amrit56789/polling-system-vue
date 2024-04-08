@@ -1,59 +1,59 @@
 <template>
-<div class="flex justify-center gap-10 mt-4">
-    <form @submit.prevent="submitSignup" class=" border-2 border-slate-200 rounded-xl space-y-4 p-4 shadow-lg flex flex-col justify-between">
+<div class="flex justify-center gap-10 mt-10">
+    <form @submit.prevent="customSubmitSignup" class="w-1/4 border-2 border-slate-200 rounded-xl space-y-4 p-6 shadow-lg flex flex-col justify-between bg-white">
         <h1 class="font-bold text-2xl text-center">{{formTitle}}</h1>
-        <div class="field">
-            <label for="first-name" class="label">First name:</label>
-            <input type="text" v-model="form.firstName" placeholder="First Name" class="input" id="first-name" />
+        <div class="mb-4 flex flex-col">
+            <label for="first-name" class="text-left mb-1 text-gray-500 text-sm">First name:</label>
+            <input type="text" v-model="form.firstName" placeholder="First Name" class="p-2 shadow text-sm appearance-none border-b border-gray-700 bg-transparent text-gray-700 leading-tight focus:outline-none" id="first-name" />
             <p v-if="errors.firstName" class="text-red-500 text-sm mt-1 text-left">{{ errors.firstName }}</p>
         </div>
 
-        <div class="field">
-            <label for="last-name" class="label">Last name:</label>
-            <input type="text" v-model="form.lastName" placeholder="Last Name" class="input" id="last-name" />
+        <div class="mb-4 flex flex-col">
+            <label for="last-name" class="text-left mb-1 text-gray-500 text-sm">Last name:</label>
+            <input type="text" v-model="form.lastName" placeholder="Last Name" class="p-2 shadow text-sm appearance-none border-b border-gray-700 bg-transparent text-gray-700 leading-tight focus:outline-none" id="first-name" />
             <p v-if="errors.lastName" class="text-red-500 text-sm mt-1 text-left">{{ errors.lastName }}</p>
         </div>
 
-        <div class="field">
-            <label for="email" class="label">Email:</label>
-            <input type="email" v-model="form.email" placeholder="Email" class="input" id="email" />
+        <div class="mb-4 flex flex-col">
+            <label for="email" class="text-left mb-1 text-gray-500 text-sm">Email:</label>
+            <input type="text" v-model="form.email" placeholder="Email" class="p-2 shadow text-sm appearance-none border-b border-gray-700 bg-transparent text-gray-700 leading-tight focus:outline-none" id="first-name" />
             <p v-if="errors.email" class="text-red-500 text-sm mt-1 text-left">{{ errors.email }}</p>
         </div>
 
-        <div class="field">
-            <label for="roles" class="label">Roles:</label>
-            <select v-model="form.roleId" class="input" id="roles">
+        <div class="mb-4 flex flex-col">
+            <label for="roles" class="text-left mb-1 text-gray-500 text-sm">Roles:</label>
+            <select v-model="form.roleId" id="roles" class="p-2 w-full shadow appearance-none border-b border-gray-700 bg-white text-gray-700 leading-tight focus:outline-none">
                 <option disabled value="">Select a role</option>
                 <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.name }}</option>
             </select>
             <p v-if="errors.roleId" class="text-red-500 text-sm mt-1 text-left">{{ errors.roleId }}</p>
         </div>
 
-        <div class="field">
-            <label for="password" class="label">Password:</label>
-            <div class="input-wrapper">
-                <input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="Password" class="input" id="password" />
-                <span @click="togglePasswordVisibility" class="icon-eye">
+        <div class="mb-4 flex flex-col">
+            <label for="password" class="text-left mb-1 text-gray-500 text-sm">Password:</label>
+            <div class="relative flex items-center w-full">
+                <input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="Password" class="p-2 w-full shadow text-sm appearance-none border-b border-gray-700 bg-transparent text-gray-700 leading-tight focus:outline-none" id="password" />
+                <span @click="togglePasswordVisibility" class="absolute right-3 cursor-pointer">
                     <i :class="{'fas fa-eye-slash': showPassword, 'fas fa-eye': !showPassword}"></i>
                 </span>
             </div>
             <p v-if="errors.password" class="text-red-500 text-sm mt-1 text-left">{{ errors.password }}</p>
         </div>
 
-        <div class="field">
-            <label for="confirm-password" class="label">Confirm Password:</label>
-            <div class="input-wrapper">
-                <input :type="showConfirmPassword ? 'text' : 'password'" v-model="form.confirmPassword" placeholder="Confirm Password" class="input" id="confirm-password" />
-                <span @click="toggleConfirmPasswordVisibility" class="icon-eye">
+        <div class="mb-4 flex flex-col">
+            <label for="confirm-password" class="text-left mb-1 text-gray-500 text-sm">Confirm Password:</label>
+            <div class="relative flex items-center w-full">
+                <input :type="showConfirmPassword ? 'text' : 'password'" v-model="form.confirmPassword" placeholder="Confirm Password" class="p-2 w-full shadow text-sm appearance-none border-b border-gray-700 bg-transparent text-gray-700 leading-tight focus:outline-none" id="confirm-password" />
+                <span @click="toggleConfirmPasswordVisibility" class="absolute right-3 cursor-pointer">
                     <i :class="{'fas fa-eye-slash': showConfirmPassword, 'fas fa-eye': !showConfirmPassword}"></i>
                 </span>
             </div>
             <p v-if="errors.confirmPassword" class="text-red-500 text-sm mt-1 text-left">{{ errors.confirmPassword }}</p>
         </div>
 
-        <button type="submit" class="btn flex justify-center items-center" :disabled="isSubmitting">
+        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full inline-flex items-center justify-center relative" :disabled="isSubmitting">
             <span v-if="!isSubmitting">{{formTitle}}</span>
-            <div v-else class="button-loader"></div>
+            <div v-else class="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></div>
         </button>
         <span v-if="signupError" class="text-red-500">{{ signupError }}</span>
 
@@ -66,21 +66,11 @@
 </div>
 </template>
 
-    
-<script>
+<script setup>
 import {
-    ref,
     onMounted,
     computed
 } from 'vue';
-import {
-    useSignup,
-    useToggleVisibility
-} from '../composables/useLoginSignup';
-import {
-    useAuthStore
-} from '../stores/auth';
-import PopupModal from './PopupModal.vue';
 import {
     useRouter,
     useRoute
@@ -88,155 +78,74 @@ import {
 import {
     storeToRefs
 } from 'pinia';
-export default {
-    name: 'SignUpForm',
-    components: {
-        PopupModal
-    },
-    setup() {
-        const {
-            form,
-            errors,
-            isSubmitting,
-            submitSignup,
-        } = useSignup();
+import {
+    useSignup,
+    useToggleVisibility
+} from '../composables/useLoginSignup';
+import {
+    useAuthStore
+} from '../stores/auth';
+import PopupModal from './PopupModal.vue'
 
-        const showModal = ref(false);
-        const modalTitle = ref('');
-        const modalMessage = ref('');
-        const modalType = ref('success');
-        const router = useRouter();
-        const route = useRoute();
-        const authStore = useAuthStore();
-        const {
-            signupError,
-            roles
-        } = storeToRefs(authStore)
-        const {
-            fetchRoles,
-        } = authStore
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
+const {
+    signupError,
+    roles,
+    showModal,
+    modalTitle,
+    modalMessage,
+    modalType,
+} = storeToRefs(authStore);
 
-        onMounted(async () => {
-            await fetchRoles();
+const {
+    fetchRoles,
+    openModal,
+    closeModal
+} = authStore;
+
+const formTitle = computed(() => route.name === 'create-user' ? 'Create User' : 'Sign Up Form');
+const {
+    form,
+    errors,
+    isSubmitting,
+    submitSignup
+} = useSignup();
+
+onMounted(async () => {
+    await fetchRoles();
+});
+
+const customSubmitSignup = async () => {
+    const result = await submitSignup(formTitle.value);
+    if (result) {
+        openModal({
+            title: "Success",
+            message: "User created Successful!",
+            type: 'success',
         });
-
-        const formTitle = computed(() => {
-            return route.name === 'create-user' ? 'Create User' : 'Sign Up Form';
-        });
-
-        const customSubmitSignup = async () => {
-            const result = await submitSignup(formTitle.value);
-            if (result) {
-                modalTitle.value = "Success";
-                modalMessage.value = `User created Successful!`;
-                modalType.value = 'success';
-                showModal.value = true;
-            }
-        };
-
-        const handleModalConfirm = () => {
-            if (modalType.value === 'success' && formTitle.value === "Sign Up Form") {
-                router.push('/login');
-            } else {
-                showModal.value = false;
-            }
-        };
-
-        return {
-            form,
-            signupError,
-            errors,
-            isSubmitting,
-            roles,
-            formTitle,
-            submitSignup: customSubmitSignup,
-            showModal,
-            modalMessage,
-            modalType,
-            modalTitle,
-            handleModalConfirm,
-            ...useToggleVisibility()
-        };
-    },
+    }
 };
+
+const handleModalConfirm = () => {
+     showModal.value = false; 
+    if (modalType.value === 'success' && formTitle.value === "Sign Up Form") {
+        router.push('/login');
+    } else {
+        closeModal()
+    }
+};
+
+const {
+    showPassword,
+    showConfirmPassword,
+    togglePasswordVisibility,
+    toggleConfirmPasswordVisibility
+} = useToggleVisibility();
 </script>
 
-    
 <style scoped>
-form {
-    width: 30%;
-    background-color: #FFFFFF;
-    padding: 20px 40px;
-}
-
-.input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-}
-
-.input {
-    flex: 1;
-    padding: 0.5rem;
-    margin: 0.1rem 0;
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid #592525;
-    background-color: transparent;
-    font-size: 0.8rem;
-}
-
-.input:focus {
-    outline: none;
-}
-
-.icon-eye {
-    position: absolute;
-    right: 0.5rem;
-    cursor: pointer;
-}
-
-.field {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-}
-
-.label {
-    text-align: start;
-    margin-bottom: 5px;
-    color: #929191;
-    font-size: 0.95rem;
-}
-
-.btn {
-    background-color: #1DB75F;
-    color: white;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    width: 100%;
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.button-loader {
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #3498db;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
-    animation: spin 1s linear infinite;
-}
-
-.btn:hover {
-    background-color: #23824c;
-}
-
 @keyframes spin {
     0% {
         transform: rotate(0deg);

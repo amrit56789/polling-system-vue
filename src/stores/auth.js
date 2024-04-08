@@ -19,6 +19,8 @@ export const useAuthStore = defineStore('auth', () => {
         modalType: 'info',
         currentPage: 1,
         isAllPollsLoaded: false,
+        userList: [],
+        userListError: null,
     });
     const router = useRouter();
 
@@ -160,6 +162,27 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    const getUserList = async (page, limit) => {
+        if (!state.userToken) {
+            console.error("Authentication token not found.");
+            return;
+        }
+        try {
+            const response = await axios.get(`${apiUrl}/user/list/${page}?limit=${limit}`, {
+                headers: {
+                    token: state.userToken
+                }
+            });
+            console.log(response.data)
+            state.userList = response.data.rows;
+            const totalUsers = response.data.count;
+            state.totalPages = Math.ceil(totalUsers / limit);
+        } catch (err) {
+            console.error('Failed to fetch polls:', err.response?.data);
+            state.userListError = err.response?.data?.message || 'Failed to fetch polls.';
+        }
+    }
+
     return {
         ...toRefs(state),
         resetError,
@@ -174,5 +197,6 @@ export const useAuthStore = defineStore('auth', () => {
         loadMorePolls,
         voteCountResponse,
         deletePolls,
+        getUserList
     };
 });

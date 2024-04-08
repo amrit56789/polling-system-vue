@@ -39,6 +39,7 @@ import {
 import {
     useAuthStore
 } from '../stores/auth';
+import { ADMIN_ROLE_ID } from "../Constant/constants"
 
 const authStore = useAuthStore();
 const {
@@ -74,7 +75,7 @@ const adminNavLinks = [{
 ];
 
 const navbarLinks = computed(() => {
-    if (user.value && user.value.roleId === 1) {
+    if (user.value && user.value.roleId === ADMIN_ROLE_ID) {
         return pollNavLinks.concat(adminNavLinks);
     }
     return pollNavLinks;

@@ -73,5 +73,4 @@ const customSubmitLogin = async () => {
 
 </script>
 
-<style scoped>
 

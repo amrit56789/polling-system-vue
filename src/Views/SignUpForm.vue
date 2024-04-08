@@ -22,7 +22,7 @@
 
         <div class="mb-4 flex flex-col">
             <label for="roles" class="text-left mb-1 text-gray-500 text-sm">Roles:</label>
-            <select v-model="form.roleId" id="roles" class="p-2 w-full shadow appearance-none border-b border-gray-700 bg-white text-gray-700 leading-tight focus:outline-none">
+            <select v-model="form.roleId" id="roles" class="p-2 w-full shadow border-b border-gray-700 bg-white text-gray-700 leading-tight focus:outline-none">
                 <option disabled value="">Select a role</option>
                 <option v-for="role in roles" :key="role.id" :value="role.id">{{ role.name }}</option>
             </select>

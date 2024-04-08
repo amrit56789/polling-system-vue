@@ -1,6 +1,9 @@
 <template>
 <nav v-if="isLoggedIn" class="bg-blue-600 p-1 pb-2 text-white shadow-lg mb-4">
-    <div class="container mx-auto flex justify-end items-center">
+    <div class="container mx-auto flex justify-between items-center">
+        <div class="flex items-center space-x-8 ml-4">
+            <router-link v-for="link in navbarLinks" :key="link.path" :to="link.path" class="text-white hover:text-blue-300 transition duration-150 ease-in-out">{{ link.title }}</router-link>
+        </div>
         <div class="relative mr-4">
             <button @click="toggleDropdown" class="flex items-center focus:outline-none bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow">
                 <span class="h-10 w-10 rounded-full overflow-hidden bg-gray-200">
@@ -16,7 +19,7 @@
                     <div class="text-gray-500">{{ user.email }}</div>
                 </div>
                 <div class="border-t border-gray-200"></div>
-                <button @click="handleLogout" class="w-full hover:text-white text-left block px-4 py-3 text-sm text-gray-700 hover:bg-gray-500 focus:outline-none focus:bg-gray-100">
+                <button @click="logout" class="w-full hover:text-white text-left block px-4 py-3 text-sm text-gray-700 hover:bg-gray-500 focus:outline-none focus:bg-gray-100">
                     Logout
                 </button>
             </div>
@@ -24,17 +27,18 @@
     </div>
 </nav>
 </template>
-    
+
 <script setup>
 import {
-    ref
+    ref,
+    computed
 } from 'vue';
 import {
     storeToRefs
 } from 'pinia';
 import {
     useAuthStore
-} from '../stores/auth'; 
+} from '../stores/auth';
 
 const authStore = useAuthStore();
 const {
@@ -50,7 +54,29 @@ const toggleDropdown = () => {
     showDropdown.value = !showDropdown.value;
 };
 
-const handleLogout = async () => {
-    logout();
-};
+const pollNavLinks = [{
+    title: 'Polls',
+    path: '/polls'
+}, ];
+
+const adminNavLinks = [{
+        title: 'Add Poll',
+        path: '/add-poll'
+    },
+    {
+        title: 'Create User',
+        path: '/create-user'
+    },
+    {
+        title: 'List Users',
+        path: '/users-list'
+    },
+];
+
+const navbarLinks = computed(() => {
+    if (user.value && user.value.roleId === 1) {
+        return pollNavLinks.concat(adminNavLinks);
+    }
+    return pollNavLinks;
+});
 </script>

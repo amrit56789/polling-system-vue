@@ -17,7 +17,8 @@ export const useAuthStore = defineStore('auth', () => {
         modalTitle: '',
         modalMessage: '',
         modalType: 'info',
-
+        currentPage: 1,
+        isAllPollsLoaded: false,
     });
     const router = useRouter();
 
@@ -102,6 +103,63 @@ export const useAuthStore = defineStore('auth', () => {
         state.showModal = false;
     }
 
+    const getPollList = async () => {
+        if (!state.userToken) {
+            console.error("Authentication token not found.");
+            return;
+        }
+        try {
+            const response = await axios.get(`${apiUrl}/poll/list/${state.currentPage}?limit=10`, {
+                headers: {
+                    token: state.userToken
+                }
+            });
+            if (response.data.rows.length < 10) {
+                state.isAllPollsLoaded = true;
+            }
+            state.polls = [...state.polls, ...response.data.rows];
+            state.currentPage++;
+        } catch (err) {
+            console.error('Failed to fetch polls:', err.response?.data);
+        }
+    };
+
+    const loadMorePolls = async () => {
+        if (!state.isAllPollsLoaded) {
+            await getPollList();
+        }
+    };
+
+    const voteCountResponse = async (payload) => {
+        try {
+            const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/vote/count`, payload,
+                {
+                    headers: {
+                        token: state.userToken
+                    }
+                }
+            );
+            return response
+        } catch (err) {
+            console.error('Failed to fetch polls:', err.response?.data);
+        }
+    }
+
+    const deletePolls = async (pollId) => {
+        try {
+            const response = await axios.delete(`${process.env.VUE_APP_API_BASE_URL}/poll/${pollId}`,
+                {
+                    headers: {
+                        token: state.userToken
+                    }
+                }
+            );
+            return response
+        } catch (err) {
+            console.error('Failed to fetch polls:', err.response?.data);
+        }
+    }
+
     return {
         ...toRefs(state),
         resetError,
@@ -112,6 +170,9 @@ export const useAuthStore = defineStore('auth', () => {
         isLoggedIn,
         openModal,
         closeModal,
-
+        getPollList,
+        loadMorePolls,
+        voteCountResponse,
+        deletePolls,
     };
 });

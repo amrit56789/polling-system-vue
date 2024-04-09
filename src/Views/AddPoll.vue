@@ -61,8 +61,10 @@ import {
     useAddPoll
 } from "../composables/useAddPoll";
 import PopupModal from './PopupModal.vue';
+import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
+const router = useRouter()
 const {
     showModal,
     modalTitle,
@@ -90,12 +92,12 @@ const handleSubmit = async () => {
     try {
         const result = await submitForm();
         if (result) {
+            resetPoll();
             openModal({
                 title: "Success",
                 message: isEdit ? "Poll updated Successful!" : "Poll created successfully!",
                 type: 'success',
             });
-            resetPoll();
         }
     } catch (err) {
         openModal({
@@ -109,7 +111,10 @@ const handleSubmit = async () => {
 
 const handleModalConfirm = () => {
     if (modalType.value === 'success') {
+        authStore.setCurrentPoll(null);
+        resetPoll();
         closeModal()
+        router.push("/polls")
     }
 };
 </script>

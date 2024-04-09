@@ -21,6 +21,7 @@ export const useAuthStore = defineStore('auth', () => {
         isAllPollsLoaded: false,
         userList: [],
         userListError: null,
+        currentPoll : null,
     });
     const router = useRouter();
 

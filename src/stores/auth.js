@@ -2,7 +2,7 @@ import { reactive, toRefs, computed } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-
+import apiClient from '../api/apiClient';
 const apiUrl = process.env.VUE_APP_API_BASE_URL;
 
 export const useAuthStore = defineStore('auth', () => {
@@ -19,6 +19,8 @@ export const useAuthStore = defineStore('auth', () => {
         modalType: 'info',
         currentPage: 1,
         isAllPollsLoaded: false,
+        userList: [],
+        userListError: null,
     });
     const router = useRouter();
 
@@ -160,6 +162,23 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    const getUserList = async (page, limit) => {
+        if (!state.userToken) {
+            console.error("Authentication token not found.");
+            return;
+        }
+        try {
+            const response = await apiClient.get(`/user/list/${page}?limit=${limit}`);
+            state.userList = response.data.rows;
+            const totalUsers = response.data.count; 
+            state.totalPages = Math.ceil(totalUsers / limit);
+            state.userListError = null;
+        } catch (err) {
+            console.error('Failed to fetch user list:', err);
+            state.userListError = 'Failed to fetch user list.'; 
+        }
+    }
+
     return {
         ...toRefs(state),
         resetError,
@@ -174,5 +193,6 @@ export const useAuthStore = defineStore('auth', () => {
         loadMorePolls,
         voteCountResponse,
         deletePolls,
+        getUserList
     };
 });

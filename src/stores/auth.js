@@ -114,7 +114,7 @@ export const useAuthStore = defineStore('auth', () => {
             if (response.data.rows.length < 10) {
                 state.isAllPollsLoaded = true;
             }
-            state.polls =response.data.rows;
+            state.polls = response.data.rows;
         } catch (err) {
             console.error('Failed to fetch polls:', err.response?.data);
         }
@@ -233,17 +233,13 @@ export const useAuthStore = defineStore('auth', () => {
 
     const getPollsVotes = async (pollId) => {
         try {
-            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/poll/${pollId}`, {
-                headers: {
-                    token: state.userToken 
-                }
-            });
-            return response; 
+            const response = await apiClient.get(`${process.env.VUE_APP_API_BASE_URL}/poll/${pollId}`);
+            return response;
         } catch (err) {
             console.error('Failed to fetch polls:', err.response?.data);
         }
     }
-    
+
     return {
         ...toRefs(state),
         resetError,

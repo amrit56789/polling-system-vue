@@ -175,6 +175,63 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    const addEditPoll = async (pollId, payload, isEdit) => {
+        try {
+            if (isEdit) {
+                await apiClient.put(`${apiUrl}/poll/${pollId}`, payload);
+            } else {
+                await apiClient.post(`${apiUrl}/poll/add`, payload);
+            }
+        } catch (err) {
+            console.error('Failed to fetch polls:', err.response?.data);
+            state.userListError = err.response?.data?.message || 'Failed to fetch polls.';
+        }
+    }
+
+    const setCurrentPoll = (pollData) => {
+        state.currentPoll = pollData;
+    };
+
+    const getCurrentPoll = () => {
+        return state.currentPoll;
+    };
+
+    async function updateOption(optionId, title) {
+        try {
+            const response = await apiClient.put(`${process.env.VUE_APP_API_BASE_URL}/option/edit/${optionId}`, { optionTitle: title });
+            return response.data;
+        } catch (err) {
+            console.error('Failed to fetch polls:', err.response?.data);
+        }
+
+    }
+
+    const updateNewOptionInExistingPoll = async (pollId, payload) => {
+        try {
+            const response = await apiClient.post(`${process.env.VUE_APP_API_BASE_URL}/poll/addPollOption/${pollId}`,
+                payload,
+                {
+                    headers: {
+                        token: state.userToken
+                    }
+                }
+            );
+            return response.data;
+        } catch (err) {
+            console.error('Failed to fetch polls:', err.response?.data);
+        }
+
+    }
+
+    const deletePollOptions = async (optionId) => {
+        try {
+            const result = await apiClient.delete(`${process.env.VUE_APP_API_BASE_URL}/option/delete/${optionId}`);
+            return result
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    
     return {
         ...toRefs(state),
         resetError,
@@ -189,6 +246,12 @@ export const useAuthStore = defineStore('auth', () => {
         loadMorePolls,
         voteCountResponse,
         deletePolls,
-        getUserList
+        getUserList,
+        addEditPoll,
+        setCurrentPoll,
+        getCurrentPoll,
+        updateOption,
+        updateNewOptionInExistingPoll,
+        deletePollOptions
     };
 });

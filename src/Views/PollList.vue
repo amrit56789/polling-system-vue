@@ -42,7 +42,7 @@ import {
 } from '@iconify/vue';
 import {
     reactive,
-    ref
+    ref,
 } from 'vue';
 import {
     usePolls

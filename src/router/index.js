@@ -42,6 +42,11 @@ const routes = [
         name: 'add-poll',
         component: AddPoll
     },
+    {
+        path: '/edit-poll',
+        name: 'EditPoll',
+        component: AddPoll
+    },
 ];
 
 const router = createRouter({

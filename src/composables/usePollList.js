@@ -1,9 +1,11 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
+import { useRouter } from 'vue-router';
 export function usePolls() {
     const isLoading = ref(false);
     const error = ref(null);
     const authStore = useAuthStore();
+    const router = useRouter()
 
     const fetchPolls = async () => {
         isLoading.value = true;
@@ -60,12 +62,19 @@ export function usePolls() {
         }
     };
 
-    const editPoll = (pollId) =>{
-        console.log(`Edit functionality poll id is ${pollId}`)
-    }
+    const editPoll = (pollId) => {
+        const pollToEdit = authStore.polls.find(poll => poll.id === pollId);
+        if (!pollToEdit) {
+            console.error('Poll not found');
+            return;
+        }
+        authStore.setCurrentPoll(pollToEdit);
+        router.push({
+            name: 'EditPoll'
+        });
+    };
 
-
-    onMounted(fetchPolls);
+          onMounted(fetchPolls);
 
     return {
         isLoading,

@@ -42,7 +42,7 @@ import {
 } from '@iconify/vue';
 import {
     reactive,
-    ref
+    ref,
 } from 'vue';
 import {
     usePolls
@@ -65,7 +65,7 @@ const {
     submitVoteResponse,
     deletePoll,
     editPoll,
-    getVotes
+    getVotes,
 } = usePolls();
 const {
     polls,
@@ -125,4 +125,5 @@ const submitVote = async (pollId) => {
         console.error("Failed to submit vote:", error.message);
     }
 };
+
 </script>

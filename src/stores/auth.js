@@ -29,7 +29,6 @@ export const useAuthStore = defineStore('auth', () => {
         state.loginError = null;
     };
 
-
     const signUp = async (formData, endPoint) => {
         resetError();
         try {
@@ -115,8 +114,7 @@ export const useAuthStore = defineStore('auth', () => {
             if (response.data.rows.length < 10) {
                 state.isAllPollsLoaded = true;
             }
-            state.polls = [...state.polls, ...response.data.rows];
-            state.currentPage++;
+            state.polls =response.data.rows;
         } catch (err) {
             console.error('Failed to fetch polls:', err.response?.data);
         }
@@ -124,6 +122,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const loadMorePolls = async () => {
         if (!state.isAllPollsLoaded) {
+            state.currentPage++;
             await getPollList();
         }
     };

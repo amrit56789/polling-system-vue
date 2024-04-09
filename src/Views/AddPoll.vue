@@ -1,27 +1,26 @@
 <template>
-<div class="max-w-4xl mx-auto p-5">
-    <h2 class="text-2xl font-semibold mb-5">{{ isEdit ? 'Edit Poll' : 'Add Poll' }}</h2>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold mb-5">{{ isEdit ? 'Edit Poll' : 'Add Poll' }}</h2>
     <form @submit.prevent="handleSubmit" class="space-y-6">
-        <!-- Poll Title -->
         <div>
-            <label for="pollTitle" class="block text-xl font-medium text-gray-700 text-left">
+            <label for="pollTitle" class="block text-lg sm:text-xl font-medium text-gray-700">
                 Poll Title
             </label>
             <div class="mt-1">
-                <input id="pollTitle" name="pollTitle" type="text" required minlength="10" class="p-4 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" placeholder="Enter poll title here..." v-model="poll.title">
+                <input id="pollTitle" name="pollTitle" type="text" required minlength="10" class="p-4 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border border-gray-300 rounded-md" placeholder="Enter poll title here..." v-model="poll.title">
             </div>
         </div>
 
-        <!-- Options -->
         <div v-for="(option, index) in poll.options" :key="index" class="pt-2">
-            <label class="block text-lg font-medium text-left text-gray-700">Option {{ index + 1 }}</label>
-            <div class="mt-1 flex rounded-md shadow-sm">
-                <input type="text" v-model="option.title" required class="p-4 flex-grow block w-full min-w-0 rounded-md sm:text-sm border-gray-300" />
-                <button type="button" @click="deleteOption(option.id, index)" class="ml-2 inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-red-500 hover:bg-red-700 focus:outline-none">
+            <label class="block text-lg font-medium text-gray-700">Option {{ index + 1 }}</label>
+            <div class="mt-1 flex flex-col sm:flex-row items-start sm:items-center">
+                <input type="text" v-model="option.title" required class="p-4 flex-grow block w-full min-w-0 rounded-md sm:text-sm border border-gray-300 mr-2" />
+                <button type="button" @click="deleteOption(option.id, index)" class="mt-2 sm:mt-0 inline-flex items-center px-3 py-2 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-md text-white bg-red-500 hover:bg-red-700 focus:outline-none">
                     Delete
                 </button>
             </div>
         </div>
+
         <div class="pt-5">
             <div class="flex justify-start">
                 <button type="button" @click="addOption" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-700">
@@ -30,7 +29,6 @@
             </div>
         </div>
 
-        <!-- Submit Button -->
         <div class="pt-5">
             <div class="flex justify-end">
                 <button type="submit" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
@@ -39,7 +37,6 @@
             </div>
         </div>
 
-        <!-- Error message -->
         <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
             <strong class="font-bold">Error!</strong>
             <span class="block sm:inline">{{ error }}</span>

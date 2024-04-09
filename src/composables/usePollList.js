@@ -12,7 +12,6 @@ export function usePolls() {
         error.value = null;
         try {
             await authStore.getPollList();
-            return true;
         } catch (err) {
             console.error("Failed to fetch polls:", err.message);
             error.value = err.message;
@@ -75,7 +74,7 @@ export function usePolls() {
         });
     };
 
-    onMounted(fetchPolls);
+          onMounted(fetchPolls);
 
     return {
         isLoading,

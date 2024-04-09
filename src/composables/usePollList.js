@@ -74,7 +74,23 @@ export function usePolls() {
         });
     };
 
-          onMounted(fetchPolls);
+    const getVotes = async (pollId) =>{
+        isLoading.value = true;
+        try {
+            const result = await authStore.getPollsVotes(pollId);
+            if (result.statusText === "OK") {
+                return result.data;
+            }
+        } catch (err) {
+            console.error("Failed to submit vote:", err.message);
+            error.value = err.message;
+            return false;
+        } finally {
+            isLoading.value = false;
+        }
+    }
+
+    onMounted(fetchPolls);
 
     return {
         isLoading,
@@ -83,6 +99,7 @@ export function usePolls() {
         deletePoll,
         loadMore,
         submitVoteResponse,
-        editPoll
+        editPoll,
+        getVotes
     };
 }

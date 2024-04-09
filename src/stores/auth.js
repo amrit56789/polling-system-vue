@@ -35,17 +35,13 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             let response;
             if (endPoint === 'Create User') {
-                response = await axios.post(`${apiUrl}/user/create`, formData, {
-                    headers: {
-                        token: state.userToken
-                    }
-                });
+                response = await apiClient.post(`/user/create`, formData);
             } else {
                 response = await axios.post(`${apiUrl}/user/register`, formData)
             }
-            state.user = response.data.user;
-            state.userToken = response.data.token;
             if (!endPoint === 'Create User') {
+                state.user = response.data.user;
+                state.userToken = response.data.token;
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 localStorage.setItem('token', response.data.token);
             }
@@ -170,12 +166,12 @@ export const useAuthStore = defineStore('auth', () => {
         try {
             const response = await apiClient.get(`/user/list/${page}?limit=${limit}`);
             state.userList = response.data.rows;
-            const totalUsers = response.data.count; 
+            const totalUsers = response.data.count;
             state.totalPages = Math.ceil(totalUsers / limit);
             state.userListError = null;
         } catch (err) {
             console.error('Failed to fetch user list:', err);
-            state.userListError = 'Failed to fetch user list.'; 
+            state.userListError = 'Failed to fetch user list.';
         }
     }
 

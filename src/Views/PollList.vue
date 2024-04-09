@@ -46,7 +46,7 @@ import {
 import {
     reactive,
     ref,
-    watch
+    // watch
 } from 'vue';
 import {
     usePolls
@@ -105,6 +105,8 @@ const onCancel = () => {
 
 const selectedOption = ref({});
 let votedPolls = JSON.parse(localStorage.getItem('votedPolls')) || [];
+let selectedOptionsArray = JSON.parse(localStorage.getItem('selectedOptions')) || [];
+
 const submissionState = reactive({});
 
 const isVoted = (pollId) => {
@@ -136,29 +138,41 @@ const showResults = async (pollId) => {
   }
 };
 
-watch([polls, isLoading], ([newPolls, newIsLoading]) => {
-    if (!newIsLoading && newPolls.length > 0) {
-        newPolls.forEach(poll => {
-            const savedOptionId = localStorage.getItem(`selectedOption-${poll.id}`);
-            if (savedOptionId) {
-                selectedOption.value[poll.id] = savedOptionId;
-            }
-        });
+
+selectedOptionsArray.forEach(({ pollId, selectedOptionId }) => {
+    selectedOption.value[pollId] = selectedOptionId;
+});
+
+const saveSelectedOptions = () => {
+    localStorage.setItem('selectedOptions', JSON.stringify(selectedOptionsArray));
+};
+
+const updateSelectedOption = (pollId, optionId) => {
+    const index = selectedOptionsArray.findIndex(option => option.pollId === pollId);
+    if (index !== -1) {
+        selectedOptionsArray[index].selectedOptionId = optionId;
+    } else {
+        selectedOptionsArray.push({ pollId, selectedOptionId: optionId });
     }
-}, { immediate: true });
+    saveSelectedOptions();
+};
 
 const submitVote = async (pollId) => {
     const selectedOptionId = selectedOption.value[pollId];
     if (!selectedOptionId || isVoted(pollId)) return;
-    submissionState[pollId] = true;
+
     try {
         await submitVoteResponse(selectedOptionId);
-        votedPolls.push(pollId);
-        localStorage.setItem('votedPolls', JSON.stringify(votedPolls));
-        localStorage.setItem(`selectedOption-${pollId}`, selectedOptionId);
+        updateSelectedOption(pollId, selectedOptionId);
+        if (!votedPolls.includes(pollId)) {
+            votedPolls.push(pollId);
+            localStorage.setItem('votedPolls', JSON.stringify(votedPolls));
+            submissionState[pollId] = true;
+        }
     } catch (error) {
         console.error("Failed to submit vote:", error.message);
     }
 };
+
 
 </script>

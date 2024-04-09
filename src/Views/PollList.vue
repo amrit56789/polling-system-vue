@@ -20,17 +20,20 @@
                 <Icon icon="mdi:pencil" class="text-xl" />
             </button>
             <button @click="showResults(poll.id)" class="text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center w-10 h-10 bg-blue-500 hover:bg-blue-600">
-                <Icon icon="mdi:chart-bar" class="text-xl" />
-            </button>
+    <Icon icon="mdi:chart-bar" class="text-xl" />
+</button>
             <button @click="confirmDelete(poll.id)" class="text-white font-semibold rounded-lg transition-colors duration-200 flex items-center justify-center w-10 h-10 bg-red-500 hover:bg-red-600">
                 <Icon icon="mdi:delete" class="text-xl" />
             </button>
+            <BarChartModal :isVisible="isModalVisible" :chartData="pollResultsData" @close="isModalVisible = false" />
         </div>
     </div>
     <div v-if="!isLoading && polls.length === 0" class="text-center text-gray-700 text-sm sm:text-base">No data found</div>
     <button v-if="!isLoading && !isAllPollsLoaded" @click="loadMore" class="mt-6 px-6 py-3 bg-gray-200 text-gray-700 hover:bg-gray-300 w-full font-semibold rounded-lg transition-colors duration-200">
         Load More
     </button>
+   
+
     <ConfirmationModal :isVisible="showModal" @confirm="onConfirm" @cancel="onCancel" />
 
 </div>
@@ -57,7 +60,7 @@ import {
     ADMIN_ROLE_ID
 } from '@/Constant/constants';
 import ConfirmationModal from './ConfirmationModal.vue';
-
+import BarChartModal from "./BarChatModal.vue"
 const {
     isLoading,
     error,
@@ -72,6 +75,9 @@ const {
     user,
     isAllPollsLoaded
 } = storeToRefs(useAuthStore());
+
+const isModalVisible = ref(false);
+const pollResultsData = ref(null);
 
 const showModal = ref(false);
 const pollIdToDelete = ref(null);
@@ -97,7 +103,6 @@ const onCancel = () => {
 }
 
 const selectedOption = ref({});
-const pollResultsData = ref(null);
 let votedPolls = JSON.parse(localStorage.getItem('votedPolls')) || [];
 const submissionState = reactive({});
 
@@ -106,12 +111,28 @@ const isVoted = (pollId) => {
 };
 
 const showResults = async (pollId) => {
-    try {
-        const response = await getVotes(pollId);
-        pollResultsData.value = response;
-    } catch (error) {
-        console.error("Failed to fetch poll results:", error);
-    }
+  try {
+    const response = await getVotes(pollId);
+    const optionList = response.optionList;
+    const labels = optionList.map(option => option.optionTitle);
+    const data = optionList.map(option => option.totalVoteCount);
+    pollResultsData.value = {
+      labels: labels,
+      datasets: [{
+        label: 'Total Votes',
+        data: data,
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+        ],
+        borderWidth: 1
+      }]
+    };
+    isModalVisible.value = true;
+  } catch (error) {
+    console.error("Failed to fetch poll results:", error.message);
+  }
 };
 
 const submitVote = async (pollId) => {

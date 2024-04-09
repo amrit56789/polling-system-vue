@@ -85,7 +85,7 @@ export const useAuthStore = defineStore('auth', () => {
         state.userToken = null;
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        localStorage.removeItem('token');
+        localStorage.removeItem('votedPolls');
         router.push('/login');
     };
 
@@ -230,6 +230,19 @@ export const useAuthStore = defineStore('auth', () => {
             console.log(err)
         }
     }
+
+    const getPollsVotes = async (pollId) => {
+        try {
+            const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/poll/${pollId}`, {
+                headers: {
+                    token: state.userToken 
+                }
+            });
+            return response; 
+        } catch (err) {
+            console.error('Failed to fetch polls:', err.response?.data);
+        }
+    }
     
     return {
         ...toRefs(state),
@@ -251,6 +264,7 @@ export const useAuthStore = defineStore('auth', () => {
         getCurrentPoll,
         updateOption,
         updateNewOptionInExistingPoll,
-        deletePollOptions
+        deletePollOptions,
+        getPollsVotes
     };
 });

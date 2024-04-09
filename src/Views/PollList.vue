@@ -46,6 +46,7 @@ import {
 import {
     reactive,
     ref,
+    watch
 } from 'vue';
 import {
     usePolls
@@ -135,13 +136,26 @@ const showResults = async (pollId) => {
   }
 };
 
+watch([polls, isLoading], ([newPolls, newIsLoading]) => {
+    if (!newIsLoading && newPolls.length > 0) {
+        newPolls.forEach(poll => {
+            const savedOptionId = localStorage.getItem(`selectedOption-${poll.id}`);
+            if (savedOptionId) {
+                selectedOption.value[poll.id] = savedOptionId;
+            }
+        });
+    }
+}, { immediate: true });
+
 const submitVote = async (pollId) => {
-    if (!selectedOption.value[pollId] || isVoted(pollId)) return;
+    const selectedOptionId = selectedOption.value[pollId];
+    if (!selectedOptionId || isVoted(pollId)) return;
     submissionState[pollId] = true;
     try {
-        await submitVoteResponse(selectedOption.value[pollId]);
+        await submitVoteResponse(selectedOptionId);
         votedPolls.push(pollId);
         localStorage.setItem('votedPolls', JSON.stringify(votedPolls));
+        localStorage.setItem(`selectedOption-${pollId}`, selectedOptionId);
     } catch (error) {
         console.error("Failed to submit vote:", error.message);
     }

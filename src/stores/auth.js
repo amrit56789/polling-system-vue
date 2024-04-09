@@ -2,7 +2,7 @@ import { reactive, toRefs, computed } from 'vue';
 import { defineStore } from 'pinia';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-
+import apiClient from '../api/apiClient';
 const apiUrl = process.env.VUE_APP_API_BASE_URL;
 
 export const useAuthStore = defineStore('auth', () => {
@@ -168,18 +168,14 @@ export const useAuthStore = defineStore('auth', () => {
             return;
         }
         try {
-            const response = await axios.get(`${apiUrl}/user/list/${page}?limit=${limit}`, {
-                headers: {
-                    token: state.userToken
-                }
-            });
-            console.log(response.data)
+            const response = await apiClient.get(`/user/list/${page}?limit=${limit}`);
             state.userList = response.data.rows;
-            const totalUsers = response.data.count;
+            const totalUsers = response.data.count; 
             state.totalPages = Math.ceil(totalUsers / limit);
+            state.userListError = null;
         } catch (err) {
-            console.error('Failed to fetch polls:', err.response?.data);
-            state.userListError = err.response?.data?.message || 'Failed to fetch polls.';
+            console.error('Failed to fetch user list:', err);
+            state.userListError = 'Failed to fetch user list.'; 
         }
     }
 

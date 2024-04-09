@@ -1,8 +1,8 @@
 <template>
-    <div v-if="isVisible" class="fixed inset-0 bg-transparent flex items-center justify-center p-4 backdrop-blur-sm" @click.self="closeModal">
-        <div class="relative bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl p-6 space-y-4" @click.stop>
+    <div v-if="isVisible" class="fixed inset-0 bg-transparent flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="relative bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl p-6 space-y-4">
             <canvas ref="barChartCanvas" class="h-64 w-full"></canvas>
-            <button class="absolute top-4 right-4 text-gray-700 hover:text-gray-900" @click="closeModal">
+            <button class="absolute -top-2 right-4 text-gray-700 hover:text-gray-900" @click="closeModal">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
